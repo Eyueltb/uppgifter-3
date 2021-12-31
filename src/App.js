@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from "react";
+import { CreateCustomer } from "./components/customers/CreateCustomer";
+import Customer from "./components/customers/Customer";
+import CustomerInfo from "./components/mock-data/CustomerInfo";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [customers, setCustomers] = useState(CustomerInfo)
+
+    return (
+        <div className="container mt-5">
+            <div className="row row-cols-1 row-cols-md-3 g-4">
+                {
+
+                    customers.map(customer => (
+                        <div key={customer.id} className="col">
+
+                            <Customer  customer={customer} />
+                        </div>
+                    ))
+                }
+            </div>
+            <CreateCustomer customers = {customers}  customersInfo = {setCustomers} />
+        </div>
+    );
 }
 
 export default App;
