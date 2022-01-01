@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import uuid from 'react-uuid';
+import ApiCustomerClient from "../api/ApiCustomerClient";
 
 
 
-export const CreateCustomer = ({customers, customerInfo}) => {
+export const CreateCustomer = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -15,12 +16,20 @@ export const CreateCustomer = ({customers, customerInfo}) => {
     const emailHandler = (e) => { setEmail(e.target.value) }
     const addressHandler = (e) => { setAddress(e.target.value) }
     const postalCodeHandler = (e) => { setPostalCode(e.target.value) }
+
     const submitHandler = (e) => {
         console.log("submitted")
         e.preventDefault()
 
-        const customer = { id: uuid(), firstName : firstName, lastName : lastName, email : email, address : {address : address , postalCode : postalCode } }
-        customerInfo([...customers, customer])
+        const customer = {
+            firstName : firstName,
+            lastName : lastName,
+            email : email,
+            address : address,
+            postalCode : postalCode
+        }
+
+        ApiCustomerClient.saveCustomer(customer).then(res=>alert("Registration successful")).catch(err=>console.log(err))
 
         setFirstName('')
         setLastName('')
@@ -28,6 +37,7 @@ export const CreateCustomer = ({customers, customerInfo}) => {
         setAddress('');
         setPostalCode('');
     }
+
     return (
         <div className="container d-flex justify-content-center mt-5">
             <div className="col-12 col-md-6">
