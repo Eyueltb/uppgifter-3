@@ -1,14 +1,13 @@
 const validMinValue = (value, minLength=2) => {
-    return value.length >= minLength;
+    return value.length < minLength ? false : true;
 }
 const validEmail = (value) => {
     const regEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return (regEx.test(value));
+    return (!regEx.test(value)) ? false : true;
 }
 const validPostalCode = (value, RequiredLength=5) => {
-    return value.length === RequiredLength;
+    return value.length === RequiredLength ? true : false;
 }
-
 const checkValidForm = (elements) => {
     let disable = false
     let errors = document.querySelectorAll('.is-invalid')
@@ -22,15 +21,17 @@ const checkValidForm = (elements) => {
     if(submitButton !== undefined)
         submitButton.disabled = disable
     if(!disable){
-        const firstName = document.getElementById('regForm-firstName');
-        const lastName = document.getElementById('regForm-lastName');
-        const email = document.getElementById('regForm-email');
-
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const email = document.getElementById('email');
+        const address = document.getElementById('address');
+        const postalCode = document.getElementById('postalCode');
         let customer = {
             firstName : firstName,
             lastName : lastName,
             email : email,
-
+            address : address,
+            postalCode : postalCode
         }
         onSubmit(customer);
     }
@@ -77,19 +78,19 @@ const validateEmail = (element) => {
     })
 }
 
-function setEventListeners  ()  {
+const setEventListeners = () => {
     forms.forEach(element => {
         switch(element.id) {
             case "firstName":
                 validateLength(element);
                 break;
-            case "regForm-lastName":
+            case "lastName":
                 validateLength(element);
                 break;
-            case "regForm-email" :
+            case "email" :
                 validateEmail(element);
                 break;
-            case "regForm-address":
+            case "address":
                 validateLength(element);
                 break;
             case "postalCode":
@@ -98,11 +99,13 @@ function setEventListeners  ()  {
         }
     })
 }
-function onSubmit(customer) {
+const onSubmit = (customer) =>{
     console.log("submitted", customer);
-
 }
 
 var forms = document.querySelectorAll('.needs-validation')
 setEventListeners()
 checkValidForm(forms)
+
+
+
