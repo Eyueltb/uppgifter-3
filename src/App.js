@@ -1,10 +1,14 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { CreateCustomer } from "./components/customers/CreateCustomer";
 import Customer from "./components/customers/Customer";
-import CustomerInfo from "./components/mock-data/CustomerInfo";
+import ApiCustomerClient from "./components/api/ApiCustomerClient";
 
 function App() {
-    const [customers, setCustomers] = useState(CustomerInfo)
+    const [customers, setCustomers] = useState([])
+
+    useEffect(() => {
+        ApiCustomerClient.fetchCustomers().then(setCustomers).catch(err=>console.log(err))
+    },[])
 
     return (
         <div className="container mt-5">
