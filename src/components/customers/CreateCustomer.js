@@ -1,8 +1,34 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import uuid from 'react-uuid';
 import ApiCustomerClient from "../api/ApiCustomerClient";
 
+const validMinValue = (value, minLength=2) => {
+    return value.length < minLength ? false : true;
+}
+const validEmail = (value) => {
+    const regEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return (!regEx.test(value)) ? false : true;
+}
+const validPostalCode = (value, RequiredLength=5) => {
+    return value.length === RequiredLength ? true : false;
+}
+const checkValidForm = (elements) => {
+    let disable = false
+    let errors = document.querySelectorAll('.is-invalid')
+    let submitButton = document.querySelectorAll('.submit')[0]
 
+    elements.forEach(element => {
+        if(element.value === "" || errors.length > 0)
+            disable = true
+    })
+
+    if(submitButton !== undefined)
+        submitButton.disabled = disable
+  
+}
+
+
+var forms = document.querySelectorAll('.needs-validation')
 
 export const CreateCustomer = () => {
     const [firstName, setFirstName] = useState("");
@@ -11,16 +37,30 @@ export const CreateCustomer = () => {
     const [address, setAddress] = useState("");
     const [postalCode, setPostalCode] = useState("");
 
-    const firstNameHandler = (e) => { setFirstName(e.target.value) }
-    const lastNameHandler = (e) => { setLastName(e.target.value) }
-    const emailHandler = (e) => { setEmail(e.target.value) }
-    const addressHandler = (e) => { setAddress(e.target.value) }
-    const postalCodeHandler = (e) => { setPostalCode(e.target.value) }
+    const firstNameHandler = (e) => { 
+        validateMinLength(e)
+        setFirstName(e.target.value) 
+    }
+    const lastNameHandler = (e) => { 
+        validateMinLength(e)
+        setLastName(e.target.value) 
+    }
+    const emailHandler = (e) => { 
+        validateEmail(e)
+        setEmail(e.target.value) 
+    }
+    const addressHandler = (e) => { 
+        validateMinLength(e)
+        setAddress(e.target.value) 
+    }
+    const postalCodeHandler = (e) => { 
+        validatePostalCode(e);
+        setPostalCode(e.target.value) 
+    }
 
     const submitHandler = (e) => {
-        console.log("submitted")
         e.preventDefault()
-
+      
         const customer = {
             firstName : firstName,
             lastName : lastName,
@@ -28,9 +68,8 @@ export const CreateCustomer = () => {
             address : address,
             postalCode : postalCode
         }
-
         ApiCustomerClient.saveCustomer(customer).then(res=>alert("Registration successful")).catch(err=>console.log(err))
-
+        
         setFirstName('')
         setLastName('')
         setEmail('');
@@ -77,3 +116,39 @@ export const CreateCustomer = () => {
         </div>
     )
 }
+const validateMinLength = (e)=> {
+    if (!validMinValue(e.target.value)) {
+        e.target.classList.add("is-invalid");
+        document.getElementById(`${e.target.id}-error`).style.display = "block";
+        checkValidForm(forms);
+    } else {
+        e.target.classList.remove("is-invalid");
+        document.getElementById(`${e.target.id}-error`).style.display = "none";
+        checkValidForm(forms);
+    }
+}
+
+const validateEmail = (e) => {
+    if (!validEmail(e.target.value)) {
+        e.target.classList.add("is-invalid");
+        document.getElementById(`${e.target.id}-error`).style.display = "block";
+        checkValidForm(forms);
+    } else {
+        e.target.classList.remove("is-invalid");
+        document.getElementById(`${e.target.id}-error`).style.display = "none";
+        checkValidForm(forms);
+    }
+}
+
+const validatePostalCode = (e) => {
+    if (!validPostalCode(e.target.value)) {
+        e.target.classList.add("is-invalid");
+        document.getElementById(`${e.target.id}-error`).style.display = "block";
+        checkValidForm(forms);
+    } else {
+        e.target.classList.remove("is-invalid");
+        document.getElementById(`${e.target.id}-error`).style.display = "none";
+        checkValidForm(forms);
+    }
+}
+
